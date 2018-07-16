@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+
+{% block title %}
+Cloud Foundry Python Application - Upload new File
+{% endblock %}
+
+{% block content %}
+                    <article>
+                    <header>
+                        <h1>Upload new File</h1>
+                        <p>This is a simple demo of file upload.</p>
+                    </header>
+                    <section>
+                        <form method=post enctype=multipart/form-data action=/upload/>
+                            <input type=file name=filename>
+                            <input type=submit value=Upload>
+                        </form>
+                    </section>
+                </article>
+{% endblock %}

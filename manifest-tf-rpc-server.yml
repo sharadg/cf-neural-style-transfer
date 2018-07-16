@@ -1,0 +1,10 @@
+---
+applications:
+- name: cf-rmq-tf-rpc-server
+  memory: 512MB
+  disk_quota: 1G
+  buildpack: python_buildpack
+  command: python3 neural_style_server.py
+  health-check-type: process
+  services:
+  - flask-rmq

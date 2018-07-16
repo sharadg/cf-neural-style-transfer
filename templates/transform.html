@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+
+{% block title %}
+Cloud Foundry Python Application - Upload new File
+{% endblock %}
+
+{% block content %}
+                    <article>
+                    <header>
+                        <h1>Transform an Image</h1>
+                        <p>This is a working example of Neural Style Transfer using TensorFlow.</p>
+                    </header>
+                    <section>
+                        <form method=post enctype=multipart/form-data action=/transform/?{{ q_string|safe }}>
+                            <input type=file name=filename>
+                            <input type=submit value=Upload>
+                        </form>
+                    </section>
+                </article>
+{% endblock %}
