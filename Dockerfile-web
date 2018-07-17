@@ -1,0 +1,16 @@
+FROM python:3.6
+LABEL maintainer="shgupta@pivotal.io"
+
+WORKDIR /usr/src/app
+
+COPY ["app.py", "parse_cfenv.py", "requirements-web.txt", "rpc_client.py", "neural_style_client.py", "./"]
+COPY ["./static/", "./static/"]
+COPY ["./templates/", "./templates/"]
+
+RUN pip3 install --no-cache-dir -r requirements-web.txt
+
+EXPOSE 8080/tcp
+
+ENV rabbitmq.username='guest' rabbitmq.password='guest' rabbitmq.server='rabbitmq' rabbitmq.port='5672' rabbitmq.vhost='/' profile='local'
+
+CMD ["gunicorn", "-b 0.0.0.0:8080", "-w 4", "-t 600", "app:app"]

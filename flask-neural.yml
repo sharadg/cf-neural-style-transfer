@@ -1,0 +1,28 @@
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: flask-neural-server
+  labels:
+    app: neural
+
+spec:
+  containers:
+  - name: flask-web-server
+    image: harbor.home.pcfdot.com/library/flask-web-server:0.1
+    env:
+    - name: rabbitmq.password
+      value: "guest"
+    - name: rabbitmq.username
+      value: "guest"
+    - name: rabbitmq.server
+      value: "rabbitmq.default.svc.cluster.local"
+    - name: rabbitmq.port
+      value: "5672"
+    - name: rabbitmq.vhost
+      value: "/"
+    - name: profile
+      value: "local"
+    command: ["python3"]
+    args: ["neural_style_server.py"]
+

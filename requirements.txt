@@ -7,3 +7,4 @@ numpy==1.14.5
 pika==0.11.2
 cfenv==0.5.3
 Pillow==5.2.0
+gunicorn==19.8.1

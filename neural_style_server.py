@@ -1,9 +1,6 @@
 import base64
 import io
 import json
-import logging
-from operator import methodcaller
-
 import matplotlib.pyplot as plt
 import numpy as np
 import pika

@@ -1,7 +1,6 @@
 import sys
 import uuid
 import time
-import logging
 import pika
 from parse_cfenv import rabbit_env
 
@@ -10,6 +9,7 @@ class FibonacciRPCClient(object):
     def __init__(self):
         self._connection_params = pika.URLParameters(rabbit_env)
         self._connection = None
+        self._outstanding_requests = {}
         self.connect()
 
     def connect(self):
@@ -20,35 +20,40 @@ class FibonacciRPCClient(object):
             self._callback_queue = result.method.queue
             self._channel.basic_consume(self.on_response, no_ack=True,
                                         queue=self._callback_queue)
+            self._connection.process_data_events()
 
     def on_response(self, ch, method, properties, body):
-        if self.corr_id == properties.correlation_id:
-            self.response = body
+        if properties.correlation_id in self._outstanding_requests:
+            self._outstanding_requests[properties.correlation_id] = body
+            sys.stderr.write('received response message with correlation id: {}\n'.format(properties.correlation_id))
 
     def _publish(self, msg, correlation_id, exchange='', routing_key='rpc_queue'):
-        self._channel.basic_publish(exchange='',
-                                    routing_key='rpc_queue',
+        self._channel.basic_publish(exchange=exchange,
+                                    routing_key=routing_key,
                                     properties=pika.BasicProperties(
                                         reply_to=self._callback_queue,
                                         correlation_id=correlation_id),
                                     body=str(msg))
-        logging.debug('message sent: {}'.format(msg))
+        sys.stderr.write('sending request message with correlation id: {}\n'.format(correlation_id))
 
-    def call(self, n):
-        self.response = None
-        self.corr_id = str(uuid.uuid4())
+    def call(self, msg):
+        corr_id = str(uuid.uuid4())
+        self._outstanding_requests[corr_id] = None
 
         try:
-            self._publish(n, correlation_id=self.corr_id)
+            self._publish(msg, correlation_id=corr_id)
         except pika.exceptions.ConnectionClosed:
-            logging.debug('Reconnectinng...')
-            time.sleep(0.5)
+            sys.stderr.write('Reconnecting...\n')
+            time.sleep(0.2)
             self.connect()
-            self._publish(n, correlation_id=self.corr_id)
+            self._publish(msg, correlation_id=corr_id)
 
-        while self.response is None:
+        while self._outstanding_requests[corr_id] is None:
             self._connection.process_data_events()
-        return int(self.response)
+
+        response = self._outstanding_requests[corr_id]
+        del self._outstanding_requests[corr_id]
+        return int(response)
 
 
 if __name__ == "__main__":
