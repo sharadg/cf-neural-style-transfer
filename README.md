@@ -14,7 +14,7 @@ This repo contains 2 different modules.
 - ### For running locally (natively on macos or ubuntu)
 - ### For running on k8s cluster (see the yaml files for creating resources)
   - [Flask Web Server - for REST apis](flask-web.yml)
-  - [Flask Fibannaci Server - for serving fibonnaci numbers](flask-fib.yml)
+  - [Flask Fibonnaci Server - for serving fibonnaci numbers](flask-fib.yml)
 
 ## TODO
  1. References
