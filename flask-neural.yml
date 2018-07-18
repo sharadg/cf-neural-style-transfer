@@ -9,7 +9,8 @@ metadata:
 spec:
   containers:
   - name: flask-web-server
-    image: harbor.home.pcfdot.com/library/flask-web-server:0.1
+    image: harbor.home.pcfdot.com/library/flask-neural-server:latest
+    tty: true
     env:
     - name: rabbitmq.password
       value: "guest"

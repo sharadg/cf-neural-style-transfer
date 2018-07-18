@@ -2,7 +2,6 @@ import base64
 import json
 import os
 import io
-import scipy.misc
 from flask import (
     Flask,
     render_template,
@@ -16,7 +15,6 @@ from flask import (
     make_response,
     send_file,
 )
-from werkzeug.datastructures import Headers
 from werkzeug.utils import secure_filename
 from rpc_client import FibonacciRPCClient
 from neural_style_client import NeuralStyleRPCClient

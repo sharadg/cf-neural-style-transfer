@@ -1,7 +1,6 @@
 import sys
 import uuid
 import time
-import logging
 import pika
 from parse_cfenv import rabbit_env
 

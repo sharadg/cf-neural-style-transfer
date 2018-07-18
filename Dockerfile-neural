@@ -1,0 +1,14 @@
+FROM python:3.6
+LABEL maintainer="shgupta@pivotal.io"
+
+WORKDIR /usr/src/app
+
+COPY ["parse_cfenv.py", "requirements.txt", "neural_style.py", "neural_style_server.py", "nst_utils.py", "tensorflow_demo.py", "./"]
+COPY ["./images/", "./images/"]
+COPY ["./output/", "./output/"]
+
+RUN pip3 install --no-cache-dir -r requirements.txt
+
+ENV rabbitmq.username='guest' rabbitmq.password='guest' rabbitmq.server='rabbitmq' rabbitmq.port='5672' rabbitmq.vhost='/' profile='local'
+
+CMD ["python", "neural_style_server.py"]

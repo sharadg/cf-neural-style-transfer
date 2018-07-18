@@ -4,15 +4,16 @@
 
 **Install Helm Chart for RabbitMQ**
 
+`helm install --name rabbitmq --set rabbitmq.username=guest,rabbitmq.password=guest stable/rabbitmq`
 
 **Build Docker image**
 
-`docker build  -t flask-web-server:0.1 --label flask-web-server -f Dockerfile-flask-webserver .`
+`docker build  -t flask-web-server:latest --label flask-web-server -f Dockerfile-web .`
 
 
 **Tag for pushing to Harbor registry**
 
-`docker tag flask-web-server:0.1 harbor.home.pcfdot.com/library/flask-web-server:0.1`
+`docker tag flask-web-server:0.4 harbor.home.pcfdot.com/library/flask-web-server:latest`
 
 
 **Check the images locally**
@@ -26,11 +27,13 @@ harbor.home.pcfdot.com/library/flask-web-server   0.1                 89c10e338b
 
 
 **Push to remote registry**
-`docker push harbor.home.pcfdot.com/library/flask-web-server:0.1`
+
+`docker push harbor.home.pcfdot.com/library/flask-web-server:latest`
 
 
 **Trial run**
-`kubectl run flask --restart=Never --image=harbor.home.pcfdot.com/library/flask-web-server:0.1 -it /bin/bash`
+
+`kubectl run flask --restart=Never --image=harbor.home.pcfdot.com/library/flask-web-server:latest -it /bin/bash`
 
 
 **Get ready to run on k8s**
@@ -38,9 +41,9 @@ harbor.home.pcfdot.com/library/flask-web-server   0.1                 89c10e338b
 
 **Run App Server, Fibonacci Server and Neural Style Transfer TensorFlow server**
 ```
-kubectl create -f flask-web-server.yml
-kubectl create -f flask-fib-server.yml
-kubectl create -f flask-neural-server.yml
+kubectl create -f flask-web.yml
+kubectl create -f flask-fib.yml
+kubectl create -f flask-neural.yml
 kubectl get pods
 NAME                  READY     STATUS    RESTARTS   AGE
 flask-fib-server      1/1       Running   0          33m
@@ -48,6 +51,14 @@ flask-neural-server   1/1       Running   0          6m
 flask-web-server      1/1       Running   0          54m
 rabbitmq-0            1/1       Running   0          5h
 ```
+
+**Check the operation**
+
+`n=40; while [[ n -lt 60 ]]; do echo $n; http http://192.168.0.234:30393/fib/${n}; n=$((n+1)); sleep 0.1; done`
+
+**Expose flask-web deployment as a Service (LoadBalancer or NodePort as the case may be)
+
+`kubectl expose deployment flask-web-deployment --type=NodePort --target-port=8080 --port=8080 --name=flask-web`
 
 ---
 

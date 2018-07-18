@@ -3,7 +3,7 @@ LABEL maintainer="shgupta@pivotal.io"
 
 WORKDIR /usr/src/app
 
-COPY ["app.py", "parse_cfenv.py", "requirements-web.txt", "rpc_client.py", "neural_style_client.py", "./"]
+COPY ["app.py", "parse_cfenv.py", "requirements-web.txt", "rpc_client.py", "rpc_server.py", "neural_style_client.py", "./"]
 COPY ["./static/", "./static/"]
 COPY ["./templates/", "./templates/"]
 
