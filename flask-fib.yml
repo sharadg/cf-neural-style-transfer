@@ -9,7 +9,7 @@ metadata:
 spec:
   containers:
   - name: flask-fib-server
-    image: harbor.home.pcfdot.com/library/flask-web-server:latest
+    image: shagupta/flask-web-server:latest
     tty: true
     env:
     - name: rabbitmq.password

@@ -9,7 +9,7 @@ metadata:
 spec:
   containers:
   - name: flask-web-server
-    image: harbor.home.pcfdot.com/library/flask-neural-server:latest
+    image: shagupta/flask-neural-server:latest
     tty: true
     env:
     - name: rabbitmq.password

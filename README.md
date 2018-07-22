@@ -9,6 +9,7 @@ This repo contains 2 different modules.
  - Helm install of RabbitMQ to act the glue layer between REST API and backend services
  - Connectivity between K8s runtime and docker registry that has the images for running the application
  - Access to GPUs to get practical results in few secods
+ - Pre-trained model downloaded and saved in images folder [Imagenet-VGG-19](http://www.vlfeat.org/matconvnet/models/imagenet-vgg-verydeep-19.mat)
 
 ## Runtime Support
 - ### For running locally (natively on macos or ubuntu)

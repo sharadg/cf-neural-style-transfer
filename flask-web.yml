@@ -18,7 +18,7 @@ spec:
     spec:
       containers:
       - name: web-server
-        image: harbor.home.pcfdot.com/library/flask-web-server:latest
+        image: shagupta/flask-web-server:latest
         tty: true
         ports:
         - containerPort: 8080

@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: tensorflow-demo
+spec:
+  containers:
+    - name: tensorflow-demo
+      image: tensorflow/tensorflow:latest-gpu-py3
+      ports:
+        - containerPort: 8888
+      resources:
+        limits:
+          nvidia.com/gpu: 1
+  nodeSelector:
+    cloud.google.com/gke-accelerator: nvidia-tesla-v100 # or nvidia-tesla-k80 etc.
