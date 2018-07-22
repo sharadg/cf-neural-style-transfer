@@ -91,6 +91,8 @@ Server: gunicorn/19.8.1
 - Run TensorFlow server
 kubectl apply -f flask-neural.yml
 
+- Test it!
 
-
+- Spin it down!
+gcloud container clusters delete gpu-cluster-v2
 
