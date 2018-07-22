@@ -7,6 +7,7 @@ COPY ["parse_cfenv.py", "requirements-gpu.txt", "neural_style.py", "neural_style
 COPY ["./images/", "./images/"]
 COPY ["./output/", "./output/"]
 
+RUN apt-get update && apt-get install -y python3-tk
 RUN pip3 install --no-cache-dir -r requirements-gpu.txt
 
 ENV rabbitmq.username='guest' rabbitmq.password='guest' rabbitmq.server='rabbitmq' rabbitmq.port='5672' rabbitmq.vhost='/' profile='local'

@@ -9,8 +9,12 @@ metadata:
 spec:
   containers:
   - name: flask-web-server
-    image: shagupta/flask-neural-server:latest
+    image: shagupta/flask-neural-server:gpu
+    imagePullPolicy: Always
     tty: true
+    resources:
+      limits:
+        nvidia.com/gpu: 1
     env:
     - name: rabbitmq.password
       value: "guest"
@@ -26,4 +30,5 @@ spec:
       value: "local"
     command: ["python3"]
     args: ["neural_style_server.py"]
-
+  nodeSelector:
+    cloud.google.com/gke-accelerator: nvidia-tesla-v100 # or nvidia-tesla-k80 etc.

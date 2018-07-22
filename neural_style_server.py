@@ -34,7 +34,7 @@ class NeuralStyleRPCServer(object):
                 properties.content_type is not None
                 and properties.content_type == "application/json"
         ):
-            req = json.loads(body)
+            req = json.loads(body) if type(body) == str else json.loads(body.decode())
             print(" [.] Received request to process file: " + req["filename"])
             sys.stderr.write('received request message with correlation id: {}\n'.format(properties.correlation_id))
         else:
