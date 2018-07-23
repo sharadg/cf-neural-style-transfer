@@ -31,17 +31,10 @@ logger = logging.getLogger(__name__)
 logger.setLevel(logging.DEBUG)
 
 
+
 class NeuralStyleTransfer(object):
     def __init__(self):
-        self._session = None
-
-        # let's pre-load the VGG16 model.
-        logger.debug("Going to load the model")
-        tf.reset_default_graph()
-        self._graph = tf.get_default_graph()
-        with self._graph.as_default():
-            self._model = load_vgg_model("images/imagenet-vgg-verydeep-19.mat")
-        logger.debug("Model loaded")
+        pass
 
     def compute_content_cost(self, a_C, a_G):
         """
@@ -174,10 +167,15 @@ class NeuralStyleTransfer(object):
 
         # Reset the graph
         # tf.reset_default_graph()
-        config = tf.ConfigProto(log_device_placement=False)
 
-        # Start interactive session
-        self._session = tf.Session(config=config, graph=self._graph)
+        # let's pre-load the VGG16 model.
+        logger.debug("Going to load the model")
+        tf.reset_default_graph()
+        model = load_vgg_model()
+        logger.debug("Model loaded")
+
+        # Start a session
+        session = tf.Session()
 
         # Let's load, reshape, and normalize our "content" image (the Louvre museum picture):
 
@@ -193,13 +191,13 @@ class NeuralStyleTransfer(object):
 
         generated_image = generate_noise_image(content_image)
 
-        with self._session.graph.as_default(), self._session.as_default() as sess:
+        with session as sess:
 
             # Assign the content image to be the input of the VGG model.
-            sess.run(self._model["input"].assign(content_image))
+            sess.run(model["input"].assign(content_image))
 
             # Select the output tensor of layer conv4_2
-            out = self._model["conv4_2"]
+            out = model["conv4_2"]
 
             # Set a_C to be the hidden layer activation from the layer we have selected
             a_C = sess.run(out)
@@ -218,11 +216,11 @@ class NeuralStyleTransfer(object):
             # At this point, a_G is a tensor and hasn't been evaluated. It will be evaluated and updated at each iteration when we run the Tensorflow graph in model_nn() below.
 
             # Assign the input of the model to be the "style" image
-            sess.run(self._model["input"].assign(style_image))
+            sess.run(model["input"].assign(style_image))
 
             # Compute the style cost
             logger.debug("Going to compute style cost")
-            J_style = self.compute_style_cost(sess, self._model, STYLE_LAYERS)
+            J_style = self.compute_style_cost(sess, model, STYLE_LAYERS)
             logger.debug("Style cost computed")
 
             # Now that you have J_content and J_style, compute the total cost J by calling `total_cost()`. Use `alpha = 10` and `beta = 40`.
@@ -243,7 +241,7 @@ class NeuralStyleTransfer(object):
             sess.run(tf.global_variables_initializer())
 
             # Run the noisy input image (initial generated image) through the model. Use assign().
-            sess.run(self._model["input"].assign(generated_image))
+            sess.run(model["input"].assign(generated_image))
 
             for i in range(num_iterations):
 
@@ -253,15 +251,19 @@ class NeuralStyleTransfer(object):
                 logger.debug("Training step finished")
 
                 # Compute the generated image by running the session on the current model['input']
-                generated_image = sess.run(self._model["input"])
+                logger.debug("Going to generate image")
+                generated_image = sess.run(model["input"])
+                logger.debug("Generated image")
 
                 # Print every 20 iteration.
                 if i % 20 == 0:
+                    logger.debug("Going to compute total costs")
                     Jt, Jc, Js = sess.run([J, J_content, J_style])
                     print("Iteration " + str(i) + " :")
                     print("total cost = {:g}".format(Jt))
                     print("content cost = {:g}".format(Jc))
                     print("style cost = {:g}".format(Js))
+                    logger.debug("Total costs computed")
 
                     # save current generated image in the "/output" directory
                     # save_image("output/" + str(i) + ".jpg", generated_image)

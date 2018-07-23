@@ -43,9 +43,10 @@ kubectl expose deployment flask-web-deployment --type=NodePort --port=80 --targe
 
 OR 
 
-kubectl expose deployment flask-web-deployment --type=LoadBalancer --port=80 --target-port=8080 --name=flask-web-lb                                                                                                                            ✹ ✭
+kubectl expose deployment flask-web-deployment --type=LoadBalancer --port=80 --target-port=8080 --name=flask-web-lb
 service/flask-web-lb exposed
-kubectl describe service flask-web-lb                                                                                                                                                                                                                                 ✹ ✭
+
+kubectl describe service flask-web-lb
 Name:                     flask-web-lb
 Namespace:                default
 Labels:                   app=flask-web
@@ -67,8 +68,14 @@ Events:
   Normal  EnsuredLoadBalancer   6s    service-controller  Ensured load balancer
 
 
+- Extract the LoadBalancer IP
+kubectl get service flask-web-lb -o jsonpath='{.status.loadBalancer.ingress[0].ip}'
+
 - Do a gut check by calling Fibonacci service
-http -v http://35.226.12.108/fib/20                                                                                                                                                                                                           ✹ ✭
+http -v http://35.226.12.108/fib/20
+OR 
+http -v http://$(kubectl get service flask-web-lb -o jsonpath='{.status.loadBalancer.ingress[0].ip}')/fib/20
+
 GET /fib/20 HTTP/1.1
 Accept: */*
 Accept-Encoding: gzip, deflate

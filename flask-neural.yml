@@ -8,7 +8,7 @@ metadata:
 
 spec:
   containers:
-  - name: flask-web-server
+  - name: flask-neural-server
     image: shagupta/flask-neural-server:gpu
     imagePullPolicy: Always
     tty: true

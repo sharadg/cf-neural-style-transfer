@@ -11,6 +11,7 @@ spec:
   - name: flask-fib-server
     image: shagupta/flask-web-server:latest
     tty: true
+    imagePullPolicy: Always
     env:
     - name: rabbitmq.password
       value: "guest"

@@ -23,7 +23,10 @@ class CONFIG:
     OUTPUT_DIR = "output/"
 
 
-def load_vgg_model(path):
+# moved to the global scope so it only happens once.
+vgg = loadmat('images/imagenet-vgg-verydeep-19.mat')
+
+def load_vgg_model():
     """
     Returns a model for the purpose of 'painting' the picture.
     Takes only the convolution layer weights and wrap using the TensorFlow
@@ -75,9 +78,6 @@ def load_vgg_model(path):
         41 is fullyconnected (1, 1, 4096, 1000)
         42 is softmax
     """
-
-    vgg = loadmat(path)
-
     vgg_layers = vgg["layers"]
 
     def _weights(layer, expected_layer_name):

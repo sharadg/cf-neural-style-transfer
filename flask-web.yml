@@ -20,6 +20,7 @@ spec:
       - name: web-server
         image: shagupta/flask-web-server:latest
         tty: true
+        imagePullPolicy: Always
         ports:
         - containerPort: 8080
         env:
