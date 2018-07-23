@@ -51,7 +51,8 @@ def fibonacci(number):
 
 @app.route("/info")
 def env_info():
-    return os.getenv("VCAP_SERVICES", "")
+    dict_env = {k:v for k,v in os.environ.items()}
+    return jsonify(dict_env)
 
 
 def allowed_file(filename):
