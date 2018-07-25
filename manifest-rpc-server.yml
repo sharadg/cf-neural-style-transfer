@@ -1,7 +1,7 @@
 ---
 applications:
 - name: cf-rmq-rpc-server
-  memory: 1G
+  memory: 512MB
   disk_quota: 2G
   buildpack: python_buildpack
   command: python3 rpc_server.py

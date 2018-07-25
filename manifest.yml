@@ -2,7 +2,7 @@
 applications:
 - name: cf-flask-rmq
   memory: 512MB
-  disk_quota: 1G
+  disk_quota: 2G
   buildpack: python_buildpack
   services:
   - flask-rmq
