@@ -1,4 +1,6 @@
 __pycache__/
 *~
 **/*.mat
-.vscode/settings.json
+.vscode/
+.idea/
+**/.DS_Store
