@@ -113,6 +113,9 @@ def transform_file():
                 "content": base64.b64encode(file.read()).decode(),
                 "content_type": file.content_type,
                 "num_iterations": request.args.get('num_iterations', 1),
+                "style": request.args.get('style', "van_gogh"),
+                "alpha": float(request.args.get("alpha", 0.70)),
+                "gpu": int(request.args.get("gpu", -1))
             }
             resp = neural_style_rpc.call(json.dumps(msg))
             resp = json.loads(resp)
@@ -127,18 +130,6 @@ def transform_file():
             else:
                 # send usual
                 return jsonify(resp)
-
-            # return jsonify(resp)
-
-            # scipy.misc.imsave(
-            #     os.path.join(app.config["UPLOAD_FOLDER"], filename),
-            #     scipy.misc.imresize(
-            #         scipy.misc.imread(
-            #             os.path.join(app.config["UPLOAD_FOLDER"], filename)
-            #         ),
-            #         size=05,
-            #     ),
-            # )
 
     return render_template("transform.html", q_string=request.query_string.decode())
 

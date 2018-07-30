@@ -1,22 +1,20 @@
 import base64
 import io
 import json
-import matplotlib.pyplot as plt
-import numpy as np
 import pika
-from PIL import Image
 import threading
-import sys
 import logging
-from neural_style import NeuralStyleTransfer
+# from neural_style import NeuralStyleTransfer
 from parse_cfenv import rabbit_env
+from tfadain.test import style_transfer
 
 logging.basicConfig(
     format="%(asctime)s - %(name)s - %(levelname)s - %(message)s")
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.DEBUG)
 
-neural_style_transfer = NeuralStyleTransfer()
+
+# neural_style_transfer = NeuralStyleTransfer()
 
 
 class NeuralStyleRPCServer(object):
@@ -40,47 +38,43 @@ class NeuralStyleRPCServer(object):
                 properties.content_type is not None
                 and properties.content_type == "application/json"
         ):
-            req = json.loads(body) if type(
-                body) == str else json.loads(body.decode())
+            req = json.loads(body) if type(body) == type("str") else json.loads(body.decode())
             print(" [.] Received request to process file: " + req["filename"])
             logger.info('received request message with correlation id: %s', properties.correlation_id)
         else:
-            req=body
+            req = body
 
         # do the neural style on req.content image object by doing reverse of base64.b64encode(file.read()).decode()
-        image_format=(
+        image_format = (
             str(req["content_type"]).rsplit("/")[1]
             if req["content_type"] is not None
             else "jpg"
         )
 
-        raw_img_bytes=base64.b64decode(req["content"].encode())
-        num_iterations=int(req["num_iterations"]
+        raw_img_bytes = base64.b64decode(req["content"].encode())
+        num_iterations = int(req["num_iterations"]
                              ) if req["num_iterations"] else 20
+        alpha = float(req["alpha"])
+        gpu = int(req["gpu"])
 
-        content_image=plt.imread(io.BytesIO(
-            raw_img_bytes), format = image_format)
-        style_image=plt.imread("images/van_gogh_800600.jpg")
+        content_image = io.BytesIO(raw_img_bytes)
+        content_image.name = req["filename"]
+        style_image = "tfadain/input/style/" + req["style"] + ".jpg"
 
         # spawn another thread for processing the file
         # stylized_image_arr = neural_style_transfer.model_nn(content_image, style_image, num_iterations)
-        stylized_image_arr=[]
-        processing_thread=threading.Thread(target = process_message,
-                                             args = (content_image, style_image, num_iterations, stylized_image_arr,
-                                                   image_format))
+        stylized_image_arr = []
+        processing_thread = threading.Thread(target=process_message,
+                                             args=(content_image, style_image, stylized_image_arr, alpha, gpu))
         processing_thread.start()
         while processing_thread.is_alive():
-            processing_thread.join(timeout = 5.0)
+            processing_thread.join(timeout=5.0)
             self._connection.process_data_events()
 
-        stylized_image=stylized_image_arr.pop()
-        # stylized_image_arr = stylized_image_arr[0] if stylized_image_arr.ndim == 4 else ''
-        # stylized_img_bytes = convert_img_arr_to_bytes(stylized_image_arr, format=image_format)
+        stylized_image = stylized_image_arr.pop()
 
-        # stylized_img_bytes = resize_image(raw_img_bytes, format=image_format)
-
-        msg={
-            "filename": "stylized-" + req["filename"],
+        msg = {
+            "filename": req["filename"] + "_stylized_" + req["style"],
             "content": base64.b64encode(stylized_image.read()).decode(),
         }
         response = json.dumps(msg)
@@ -110,40 +104,9 @@ class NeuralStyleRPCServer(object):
             'sending response message with correlation id: %s', correlation_id)
 
 
-def process_message(content_image, style_image, num_iterations, stylized_image_arr, format):
-    stylized_image_arr.append(neural_style_transfer.model_nn(
-        content_image, style_image, num_iterations, format))
-
-
-def resize_image(image_bytes, width=800, height=600, format="jpeg"):
-    # convert nympy array image to PIL.Image
-    image_array = plt.imread(io.BytesIO(image_bytes),
-                             format=format).astype(np.float)
-    if len(image_array.shape) == 2:
-        # grayscale
-        image_array = np.dstack((image_array, image_array, image_array))
-    elif image_array.shape[2] == 4:
-        # PNG with alpha channel
-        image_array = image_array[:, :, :3]
-
-    image = Image.fromarray(np.clip(image_array, 0, 255).astype(np.uint8))
-    image = image.resize((height, width))
-    # convert PIL.Image into nympy array back again
-    new_image_bytes = io.BytesIO()
-    image.save(new_image_bytes, format=format)
-    new_image_bytes.seek(0)
-
-    return new_image_bytes
-
-
-def convert_img_arr_to_bytes(image_arr, format="jpeg"):
-    image = Image.fromarray(np.clip(image_arr, 0, 255).astype(np.uint8))
-    # convert PIL.Image into nympy array back again
-    new_image_bytes = io.BytesIO()
-    image.save(new_image_bytes, format=format)
-    new_image_bytes.seek(0)
-
-    return new_image_bytes
+def process_message(content_image, style_image, stylized_image_arr, alpha, gpu):
+    stylized_image_arr.append(
+        style_transfer(content=content_image, content_size=600, style=style_image, style_size=600, alpha=alpha, gpu=gpu))
 
 
 if __name__ == "__main__":
