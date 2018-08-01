@@ -4,8 +4,8 @@ LABEL maintainer="shgupta@pivotal.io"
 WORKDIR /usr/src/app
 
 COPY ["parse_cfenv.py", "requirements-gpu.txt", "neural_style.py", "neural_style_server.py", "nst_utils.py", "tensorflow_demo.py", "./"]
-COPY ["./images/", "./images/"]
 COPY ["./output/", "./output/"]
+COPY ["./tfadain/", "./tfadain/"]
 
 RUN apt-get update && apt-get install -y python3-tk && pip install --upgrade pip
 RUN pip install --no-cache-dir -r requirements-gpu.txt

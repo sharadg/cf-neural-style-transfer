@@ -9,7 +9,7 @@ metadata:
 spec:
   containers:
   - name: flask-neural-server
-    image: shagupta/flask-neural-server:gpu
+    image: shagupta/flask-neural-server:gpu-ada
     imagePullPolicy: Always
     tty: true
     resources:

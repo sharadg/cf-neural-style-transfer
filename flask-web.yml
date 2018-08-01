@@ -18,7 +18,7 @@ spec:
     spec:
       containers:
       - name: web-server
-        image: shagupta/flask-web-server:latest
+        image: shagupta/flask-web-server:ada
         tty: true
         imagePullPolicy: Always
         ports:
