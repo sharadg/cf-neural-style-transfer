@@ -3,13 +3,13 @@
 ## Didn't work
 
 ```
-gcloud beta container clusters create "gpu-cluster" --zone "us-central1-f" --username "admin" --cluster-version "1.10.5-gke.3" \
+gcloud beta container clusters create "gpu-cluster" --zone "us-central1-f" --username "admin" --cluster-version "1.10.9-gke.5" \
 --machine-type "n1-standard-2" --accelerator "type=nvidia-tesla-v100,count=1" --image-type "UBUNTU" --disk-type "pd-standard" \
 --disk-size "100" \
 --scopes "https://www.googleapis.com/auth/devstorage.read_only","https://www.googleapis.com/auth/logging.write","https://www.googleapis.com/auth/monitoring","https://www.googleapis.com/auth/servicecontrol","https://www.googleapis.com/auth/service.management.readonly","https://www.googleapis.com/auth/trace.append" \
 --num-nodes "2" --enable-cloud-logging --enable-cloud-monitoring --network "default" --subnetwork "default" --addons HorizontalPodAutoscaling,HttpLoadBalancing --no-enable-autoupgrade --no-enable-autorepair
 
-gcloud beta container clusters create "gpu-cluster" --zone "us-central1-f" --username "admin" --cluster-version "1.10.5-gke.3" \
+gcloud beta container clusters create "gpu-cluster" --zone "us-central1-f" --username "admin" --cluster-version "1.10.9-gke.5" \
 --machine-type "n1-standard-2" --accelerator "type=nvidia-tesla-v100,count=1" --image-type "COS" --disk-type "pd-standard" \
 --disk-size "100" \
 --scopes "https://www.googleapis.com/auth/devstorage.read_only","https://www.googleapis.com/auth/logging.write","https://www.googleapis.com/auth/monitoring","https://www.googleapis.com/auth/servicecontrol","https://www.googleapis.com/auth/service.management.readonly","https://www.googleapis.com/auth/trace.append" \
@@ -18,7 +18,7 @@ gcloud beta container clusters create "gpu-cluster" --zone "us-central1-f" --use
 
 ## Worked
 ```
-gcloud beta container clusters create "gpu-cluster-v2" --zone "us-central1-f" --username "admin" --cluster-version "1.9.7-gke.3" \
+gcloud beta container clusters create "gpu-cluster-v2" --zone "us-central1-f" --username "admin" --cluster-version "1.10.9-gke.5" \
 --machine-type "n1-standard-2" --accelerator "type=nvidia-tesla-v100,count=1" --image-type "COS" --disk-type "pd-standard" --disk-size "100" \
 --scopes "https://www.googleapis.com/auth/devstorage.read_only","https://www.googleapis.com/auth/logging.write","https://www.googleapis.com/auth/monitoring","https://www.googleapis.com/auth/servicecontrol","https://www.googleapis.com/auth/service.management.readonly","https://www.googleapis.com/auth/trace.append" \
 --num-nodes "2" --enable-cloud-logging --enable-cloud-monitoring --network "default" --subnetwork "default" --addons HorizontalPodAutoscaling,HttpLoadBalancing --no-enable-autoupgrade --enable-autorepair
@@ -27,7 +27,7 @@ gcloud beta container clusters create "gpu-cluster-v2" --zone "us-central1-f" --
 
 - Fetch credentials
 
-    `gcloud container clusters get-credentials gpu-cluster-v2`
+    `gcloud container clusters get-credentials gpu-cluster-v2 --zone "us-central1-f"`
 
 - Fetch nodes info
 
@@ -135,5 +135,5 @@ gcloud beta container clusters create "gpu-cluster-v2" --zone "us-central1-f" --
 
 - Spin it down!
 
-    `gcloud container clusters delete gpu-cluster`
+    `gcloud container clusters delete gpu-cluster-v2 --zone="us-central1-f"`
 
